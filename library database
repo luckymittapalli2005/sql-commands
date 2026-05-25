@@ -1,0 +1,215 @@
+CREATE DATABASE library;
+
+USE library;
+
+#create table authors
+
+CREATE TABLE Authors (
+    author_id INT PRIMARY KEY,
+    author_name VARCHAR(100),
+    country VARCHAR(50)
+);
+#create table books
+
+CREATE TABLE Books (
+    book_id INT PRIMARY KEY,
+    title VARCHAR(150),
+    genre VARCHAR(50),
+    price DECIMAL(6,2),
+    published_year INT,
+    author_id INT,
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+);
+
+#inserting data for authors
+
+INSERT INTO Authors (author_id, author_name, country) VALUES
+(1, 'J.K. Rowling', 'United Kingdom'),
+(2, 'George Orwell', 'United Kingdom'),
+(3, 'Mark Twain', 'United States'),
+(4, 'Jane Austen', 'United Kingdom'),
+(5, 'Leo Tolstoy', 'Russia'),
+(6, 'Charles Dickens', 'United Kingdom'),
+(7, 'Ernest Hemingway', 'United States'),
+(8, 'F. Scott Fitzgerald', 'United States'),
+(9, 'Agatha Christie', 'United Kingdom'),
+(10, 'Dan Brown', 'United States'),
+(11, 'Paulo Coelho', 'Brazil'),
+(12, 'Chetan Bhagat', 'India'),
+(13, 'Ruskin Bond', 'India'),
+(14, 'R.K. Narayan', 'India'),
+(15, 'J.R.R. Tolkien', 'United Kingdom'),
+(16, 'Stephen King', 'United States'),
+(17, 'Arthur Conan Doyle', 'United Kingdom'),
+(18, 'Khaled Hosseini', 'Afghanistan'),
+(19, 'Harper Lee', 'United States'),
+(20, 'Yuval Noah Harari', 'Israel');
+
+SELECT*FROM authors;
+
+INSERT INTO Books (book_id, title, genre, price, published_year, author_id) VALUES
+(101, 'Harry Potter and the Sorcerer''s Stone', 'Fantasy', 499.99, 1997, 1),
+(102, '1984', 'Dystopian', 299.50, 1949, 2),
+(103, 'Adventures of Huckleberry Finn', 'Adventure', 350.00, 1884, 3),
+(104, 'Pride and Prejudice', 'Romance', 280.75, 1813, 4),
+(105, 'War and Peace', 'Historical Fiction', 599.00, 1869, 5),
+(106, 'Oliver Twist', 'Classic', 320.00, 1838, 6),
+(107, 'The Old Man and the Sea', 'Literary Fiction', 260.00, 1952, 7),
+(108, 'The Great Gatsby', 'Classic', 310.50, 1925, 8),
+(109, 'Murder on the Orient Express', 'Mystery', 450.00, 1934, 9),
+(110, 'The Da Vinci Code', 'Thriller', 550.00, 2003, 10),
+(111, 'The Alchemist', 'Fiction', 400.00, 1988, 11),
+(112, 'Five Point Someone', 'Drama', 275.00, 2004, 12),
+(113, 'The Blue Umbrella', 'Children', 220.00, 1980, 13),
+(114, 'Malgudi Days', 'Short Stories', 330.00, 1943, 14),
+(115, 'The Hobbit', 'Fantasy', 500.00, 1937, 15),
+(116, 'It', 'Horror', 650.00, 1986, 16),
+(117, 'Sherlock Holmes', 'Detective', 420.00, 1892, 17),
+(118, 'The Kite Runner', 'Drama', 480.00, 2003, 18),
+(119, 'To Kill a Mockingbird', 'Classic', 390.00, 1960, 19),
+(120, 'Sapiens', 'History', 700.00, 2011, 20);
+
+SELECT *FROM Books;
+
+#joining query
+
+SELECT b.book_id,
+b.title,
+b.genre,
+b.price,
+a.author_name,
+a.country FROM Books b JOIN authors a ON b.author_id=a.author_id;
+#1 display all books
+SELECT*FROM Books;
+
+#2 dispay all authors from uk
+SELECT*FROM authors WHERE country='united kingdom';
+
+#3 find books that cost more than 500
+SELECT title,price FROM Books WHERE price>500;
+
+#4 show books published after 2000
+SELECT title,published_year FROM Books WHERE published_year>2000;
+
+#5 count total no.of books
+SELECT COUNT(*)AS total_books FROM Books;
+
+#6 find the avg price of book
+SELECT AVG(price)AS average_price FROM  Books;
+
+#7 find the most expensive books
+SELECT title,price FROM Books WHERE price =(
+SELECT MAX(price)FROM books);
+
+#8 find the cheapest book
+SELECT title,price FROM Books WHERE price =(
+SELECT MIN(price)FROM books);
+
+#9 display all books from fantacy
+SELECT*FROM Books WHERE genre='fantasy';
+
+#10 count books in each genre
+SELECT genre,COUNT(*)AS total_books FROM Books GROUP BY genre;
+
+#11 find total price of all books
+SELECT SUM(price)AS total_book_value FROM Books;
+
+#12 display books with authors names
+SELECT b.title,a.author_name FROM Books b JOIN authors a ON b.author_id=a.author_id;
+
+#13 find authors who wrote books on fantasy genre
+SELECT DISTINCT a.author_name
+FROM Authors a 
+JOIN Books b
+ON a.author_id = b.author_id
+WHERE b.genre = 'Fantasy';
+
+#14 find books written by indians authors
+SELECT b.title ,a.author_name FROM Books b JOIN authors a ON b.author_id=a.author_id WHERE a.country ='india';
+ 
+#15 find the no.of authors by country
+SELECT country,COUNT(*)AS total_authors
+FROM authors GROUP BY country;
+
+#16  find average book price by gener
+SELECT genre,AVG(price)AS avg_price
+FROM books
+GROUP BY genre;
+
+#17 find the latest published books
+
+SELECT title,published_year
+FROM books
+WHERE published_year =(
+SELECT MAX(published_year)
+FROM books);
+
+# 18 find the published book before 1950
+SELECT title,published_year
+FROM books
+WHERE published_year<1950;
+
+# 19 find the authors whose books cost more than 600
+
+SELECT DISTINCT a.author_name,b.price FROM authors a
+JOIN books b
+ON a.author_id = b.author_id
+WHERE b.price>600;
+
+# 20 display books sorted by price 
+SELECT title,price
+FROM books
+ORDER BY price DESC;
+
+# 21 display top 5 most expensive books 
+SELECT title,price
+FROM books 
+ORDER BY price DESC
+LIMIT 5;
+
+# 22 find the total no.of books written by each  author 
+SELECT a.author_name,COUNT(b.book_id)
+AS total_books
+FROM authors a JOIN books b
+ON a.author_id = b.author_id
+GROUP BY a.author_name;
+
+# 23 find authors whose names start with 'J'
+SELECT * FROM authors
+WHERE author_name LIKE 'J%';
+
+#24 find books containing the word'the'
+SELECT * FROM Books
+WHERE title LIKE '%the%';
+
+#25 find the books price b/w 300 and 500
+SELECT*FROM books
+WHERE price BETWEEN 300 AND 500;
+
+#26 find the second most expensive books
+SELECT title,price
+FROM books
+ORDER by price DESC
+LIMIT 1 OFFSET 1;
+
+# 27 Find the genre having more than book
+SELECT genre,COUNT(*)AS total_books FROM books
+GROUP BY genre
+Having COUNT(*)>1;
+
+# 28 find the authors and title sorted alphabetically
+SELECT a.author_name,b.title
+FROM authors a 
+JOIN books b
+ON a.author_id=b.author_id
+ORDER BY a.author_name ASC;
+
+# 29 find the oldest published book
+SELECT title,published_year
+FROM books
+ORDER BY published_year ASC LIMIT 1;
+
+#30 calculate price difference from avg price
+SELECT title,price,price-(SELECT AVG (price)FROM books)
+as difference_from_avg
+FROM books;
